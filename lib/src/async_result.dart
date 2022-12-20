@@ -1,0 +1,31 @@
+import 'result.dart';
+
+typedef AsyncResult<TFailure, TSuccess> = Future<Result<TFailure, TSuccess>>;
+
+extension AsyncResultExt<TFailure, TSuccess>
+    on AsyncResult<TFailure, TSuccess> {
+  Future<T> when<T>(
+    T Function(TFailure error) whenError,
+    T Function(TSuccess success) whenSuccess,
+  ) {
+    return then((value) => value.when(whenError, whenSuccess));
+  }
+
+  AsyncResult<TFailure, T> map<T>(T Function(TSuccess success) fn) {
+    return then((value) => value.map(fn));
+  }
+
+  AsyncResult<T, TSuccess> mapError<T>(T Function(TFailure error) fn) {
+    return then((value) => value.mapError(fn));
+  }
+
+  AsyncResult<TFailure, T> flatMap<T>(
+      AsyncResult<TFailure, T> Function(TSuccess success) fn) {
+    return then((value) => value.when(Failure.new, fn));
+  }
+
+  AsyncResult<TFailure, TSuccess> recovery<T>(
+      AsyncResult<TFailure, TSuccess> Function(TFailure error) fn) {
+    return then((value) => value.when(fn, Success.new));
+  }
+}
