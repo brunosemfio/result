@@ -28,6 +28,8 @@ extension AsyncResultExt<TFailure, TSuccess>
       AsyncResult<TFailure, TSuccess> Function(TFailure error) fn) {
     return then((value) => value.when(fn, Success.new));
   }
+}
 
+extension ResultExt<TFailure, TSuccess> on Result<TFailure, TSuccess> {
   AsyncResult<TFailure, TSuccess> toAsyncResult() async => this;
 }
