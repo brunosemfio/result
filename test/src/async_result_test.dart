@@ -11,6 +11,22 @@ void main() {
     expect(await success.when(id, id), equals(1));
   });
 
+  test('tryGetSuccess', () async {
+    final error = Future.value(Failure(0));
+    final success = Future.value(Success(1));
+
+    expect(await error.tryGetSuccess(), isNull);
+    expect(await success.tryGetSuccess(), equals(1));
+  });
+
+  test('tryGetFailure', () async {
+    final error = Future.value(Failure(0));
+    final success = Future.value(Success(1));
+
+    expect(await error.tryGetFailure(), equals(0));
+    expect(await success.tryGetFailure(), isNull);
+  });
+
   test('map', () async {
     final error = Future.value(Failure(0));
     final success = Future.value(Success(0));
@@ -46,10 +62,10 @@ void main() {
         .flatMap((r) async => Success('${r}R2'))
         .flatMap((r) async => Success('${r}R3'));
 
-    expect(a.isLeft, isTrue);
-    expect(b.isLeft, isTrue);
-    expect(c.isLeft, isTrue);
-    expect(d.isRight, isTrue);
+    expect(a.isFailure, isTrue);
+    expect(b.isFailure, isTrue);
+    expect(c.isFailure, isTrue);
+    expect(d.isSuccess, isTrue);
     expect(a.when(id, id), equals('L1'));
     expect(b.when(id, id), equals('L1'));
     expect(c.when(id, id), equals('R1L2'));
@@ -65,13 +81,21 @@ void main() {
     final c = await success.recovery((l) async => Failure('${l}L2'));
     final d = await success.recovery((l) async => Success('${l}R2'));
 
-    expect(a.isLeft, isTrue);
-    expect(b.isRight, isTrue);
-    expect(c.isRight, isTrue);
-    expect(d.isRight, isTrue);
+    expect(a.isFailure, isTrue);
+    expect(b.isSuccess, isTrue);
+    expect(c.isSuccess, isTrue);
+    expect(d.isSuccess, isTrue);
     expect(a.when(id, id), equals('L1L2'));
     expect(b.when(id, id), equals('L1R2'));
     expect(c.when(id, id), equals('R1'));
     expect(d.when(id, id), equals('R1'));
+  });
+
+  test('toAsyncResult', () async {
+    final error = Failure(0).toAsyncResult();
+    final success = Success(1).toAsyncResult();
+
+    expect(error, isA<AsyncResult>());
+    expect(success, isA<AsyncResult>());
   });
 }

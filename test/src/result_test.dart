@@ -6,16 +6,16 @@ void main() {
   test('left', () {
     final error = Failure(0);
 
-    expect(error.isLeft, true);
-    expect(error.isRight, false);
+    expect(error.isFailure, true);
+    expect(error.isSuccess, false);
     expect(error.when(id, id), equals(0));
   });
 
   test('right', () {
     final sucess = Success(1);
 
-    expect(sucess.isLeft, false);
-    expect(sucess.isRight, true);
+    expect(sucess.isFailure, false);
+    expect(sucess.isSuccess, true);
     expect(sucess.when(id, id), equals(1));
   });
 
@@ -25,6 +25,22 @@ void main() {
 
     expect(error.when(id, id), equals(0));
     expect(success.when(id, id), equals(1));
+  });
+
+  test('tryGetSuccess', () {
+    final error = Failure(0);
+    final success = Success(1);
+
+    expect(error.tryGetSuccess(), isNull);
+    expect(success.tryGetSuccess(), equals(1));
+  });
+
+  test('tryGetFailure', () {
+    final error = Failure(0);
+    final success = Success(1);
+
+    expect(error.tryGetFailure(), equals(0));
+    expect(success.tryGetFailure(), isNull);
   });
 
   test('map', () {
@@ -58,10 +74,10 @@ void main() {
     final c = success.flatMap((r) => Failure(r + 1));
     final d = success.flatMap((r) => Success(r + 2));
 
-    expect(a.isLeft, isTrue);
-    expect(b.isLeft, isTrue);
-    expect(c.isLeft, isTrue);
-    expect(d.isRight, isTrue);
+    expect(a.isFailure, isTrue);
+    expect(b.isFailure, isTrue);
+    expect(c.isFailure, isTrue);
+    expect(d.isSuccess, isTrue);
     expect(a.when(id, id), equals(0));
     expect(b.when(id, id), equals(0));
     expect(c.when(id, id), equals(1));
@@ -77,10 +93,10 @@ void main() {
     final c = success.recovery((l) => Failure(l + 1));
     final d = success.recovery((l) => Success(l + 2));
 
-    expect(a.isLeft, isTrue);
-    expect(b.isRight, isTrue);
-    expect(c.isRight, isTrue);
-    expect(d.isRight, isTrue);
+    expect(a.isFailure, isTrue);
+    expect(b.isSuccess, isTrue);
+    expect(c.isSuccess, isTrue);
+    expect(d.isSuccess, isTrue);
     expect(a.when(id, id), equals(1));
     expect(b.when(id, id), equals(2));
     expect(c.when(id, id), equals(0));

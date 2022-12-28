@@ -11,6 +11,14 @@ extension AsyncResultExt<TFailure, TSuccess>
     return then((value) => value.when(whenError, whenSuccess));
   }
 
+  Future<TSuccess?> tryGetSuccess() {
+    return then((value) => value.tryGetSuccess());
+  }
+
+  Future<TFailure?> tryGetFailure() {
+    return then((value) => value.tryGetFailure());
+  }
+
   AsyncResult<TFailure, T> map<T>(T Function(TSuccess success) fn) {
     return then((value) => value.map(fn));
   }

@@ -1,11 +1,21 @@
+import 'package:result/identity.dart';
+
 abstract class Result<TFailure, TSuccess> {
-  bool get isLeft;
-  bool get isRight;
+  bool get isFailure;
+  bool get isSuccess;
 
   T when<T>(
     T Function(TFailure error) whenError,
     T Function(TSuccess success) whenSuccess,
   );
+
+  TSuccess? tryGetSuccess() {
+    return when((_) => null, id);
+  }
+
+  TFailure? tryGetFailure() {
+    return when(id, (_) => null);
+  }
 
   Result<TFailure, T> map<T>(T Function(TSuccess success) fn) {
     return when(Failure.new, (success) => Success(fn(success)));
@@ -32,10 +42,10 @@ class Failure<TFailure, TSuccess> extends Result<TFailure, TSuccess> {
   final TFailure _value;
 
   @override
-  bool get isLeft => true;
+  bool get isFailure => true;
 
   @override
-  bool get isRight => false;
+  bool get isSuccess => false;
 
   @override
   T when<T>(
@@ -52,10 +62,10 @@ class Success<TFailure, TSuccess> extends Result<TFailure, TSuccess> {
   final TSuccess _value;
 
   @override
-  bool get isLeft => false;
+  bool get isFailure => false;
 
   @override
-  bool get isRight => true;
+  bool get isSuccess => true;
 
   @override
   T when<T>(
