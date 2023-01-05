@@ -34,6 +34,10 @@ abstract class Result<TFailure, TSuccess> {
       Result<TFailure, TSuccess> Function(TFailure error) fn) {
     return when(fn, Success.new);
   }
+
+  Result<TFailure, T> pure<T>(Result<TFailure, T> Function() fn) {
+    return when(Failure.new, (_) => fn());
+  }
 }
 
 class Failure<TFailure, TSuccess> extends Result<TFailure, TSuccess> {

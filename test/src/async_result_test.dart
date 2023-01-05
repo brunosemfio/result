@@ -91,6 +91,25 @@ void main() {
     expect(d.when(id, id), equals('R1'));
   });
 
+  test('pure', () async {
+    final error = Future.value(Failure('L1'));
+    final success = Future.value(Success('R1'));
+
+    final a = await error.pure(() async => Failure('L2'));
+    final b = await error.pure(() async => Success('R2'));
+    final c = await success.pure(() async => Failure('L2'));
+    final d = await success.pure(() async => Success('R2'));
+
+    expect(a.isFailure, isTrue);
+    expect(b.isFailure, isTrue);
+    expect(c.isFailure, isTrue);
+    expect(d.isSuccess, isTrue);
+    expect(a.when(id, id), equals('L1'));
+    expect(b.when(id, id), equals('L1'));
+    expect(c.when(id, id), equals('L2'));
+    expect(d.when(id, id), equals('R2'));
+  });
+
   test('toAsyncResult', () async {
     final error = Failure(0).toAsyncResult();
     final success = Success(1).toAsyncResult();

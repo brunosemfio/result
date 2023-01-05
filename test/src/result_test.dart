@@ -102,4 +102,23 @@ void main() {
     expect(c.when(id, id), equals(0));
     expect(d.when(id, id), equals(0));
   });
+
+  test('pure', () {
+    final error = Failure(0);
+    final success = Success(0);
+
+    final a = error.pure(() => Failure(1));
+    final b = error.pure(() => Success(2));
+    final c = success.pure(() => Failure(1));
+    final d = success.pure(() => Success(2));
+
+    expect(a.isFailure, isTrue);
+    expect(b.isFailure, isTrue);
+    expect(c.isFailure, isTrue);
+    expect(d.isSuccess, isTrue);
+    expect(a.when(id, id), equals(0));
+    expect(b.when(id, id), equals(0));
+    expect(c.when(id, id), equals(1));
+    expect(d.when(id, id), equals(2));
+  });
 }
