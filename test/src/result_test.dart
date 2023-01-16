@@ -31,16 +31,16 @@ void main() {
     final error = Failure(0);
     final success = Success(1);
 
-    expect(error.tryGetSuccess(), isNull);
-    expect(success.tryGetSuccess(), equals(1));
+    expect(error.successOrNull(), isNull);
+    expect(success.successOrNull(), equals(1));
   });
 
   test('tryGetFailure', () {
     final error = Failure(0);
     final success = Success(1);
 
-    expect(error.tryGetFailure(), equals(0));
-    expect(success.tryGetFailure(), isNull);
+    expect(error.failureOrNull(), equals(0));
+    expect(success.failureOrNull(), isNull);
   });
 
   test('map', () {

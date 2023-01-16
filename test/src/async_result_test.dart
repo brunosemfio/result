@@ -15,16 +15,16 @@ void main() {
     final error = Future.value(Failure(0));
     final success = Future.value(Success(1));
 
-    expect(await error.tryGetSuccess(), isNull);
-    expect(await success.tryGetSuccess(), equals(1));
+    expect(await error.successOrNull(), isNull);
+    expect(await success.successOrNull(), equals(1));
   });
 
   test('tryGetFailure', () async {
     final error = Future.value(Failure(0));
     final success = Future.value(Success(1));
 
-    expect(await error.tryGetFailure(), equals(0));
-    expect(await success.tryGetFailure(), isNull);
+    expect(await error.failureOrNull(), equals(0));
+    expect(await success.failureOrNull(), isNull);
   });
 
   test('map', () async {

@@ -9,33 +9,41 @@ abstract class Result<TFailure, TSuccess> {
     T Function(TSuccess success) whenSuccess,
   );
 
-  TSuccess? tryGetSuccess() {
+  TSuccess? successOrNull() {
     return when((_) => null, id);
   }
 
-  TFailure? tryGetFailure() {
+  TFailure? failureOrNull() {
     return when(id, (_) => null);
   }
 
-  Result<TFailure, T> map<T>(T Function(TSuccess success) fn) {
+  Result<TFailure, T> map<T>(
+    T Function(TSuccess success) fn,
+  ) {
     return when(Failure.new, (success) => Success(fn(success)));
   }
 
-  Result<T, TSuccess> mapError<T>(T Function(TFailure error) fn) {
+  Result<T, TSuccess> mapError<T>(
+    T Function(TFailure error) fn,
+  ) {
     return when((error) => Failure(fn(error)), Success.new);
   }
 
   Result<TFailure, T> flatMap<T>(
-      Result<TFailure, T> Function(TSuccess success) fn) {
+    Result<TFailure, T> Function(TSuccess success) fn,
+  ) {
     return when(Failure.new, fn);
   }
 
   Result<TFailure, TSuccess> recovery<T>(
-      Result<TFailure, TSuccess> Function(TFailure error) fn) {
+    Result<TFailure, TSuccess> Function(TFailure error) fn,
+  ) {
     return when(fn, Success.new);
   }
 
-  Result<TFailure, T> pure<T>(Result<TFailure, T> Function() fn) {
+  Result<TFailure, T> pure<T>(
+    Result<TFailure, T> Function() fn,
+  ) {
     return when(Failure.new, (_) => fn());
   }
 }

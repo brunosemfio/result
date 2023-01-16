@@ -11,33 +11,41 @@ extension AsyncResultExt<TFailure, TSuccess>
     return then((value) => value.when(whenError, whenSuccess));
   }
 
-  Future<TSuccess?> tryGetSuccess() {
-    return then((value) => value.tryGetSuccess());
+  Future<TSuccess?> successOrNull() {
+    return then((value) => value.successOrNull());
   }
 
-  Future<TFailure?> tryGetFailure() {
-    return then((value) => value.tryGetFailure());
+  Future<TFailure?> failureOrNull() {
+    return then((value) => value.failureOrNull());
   }
 
-  AsyncResult<TFailure, T> map<T>(T Function(TSuccess success) fn) {
+  AsyncResult<TFailure, T> map<T>(
+    T Function(TSuccess success) fn,
+  ) {
     return then((value) => value.map(fn));
   }
 
-  AsyncResult<T, TSuccess> mapError<T>(T Function(TFailure error) fn) {
+  AsyncResult<T, TSuccess> mapError<T>(
+    T Function(TFailure error) fn,
+  ) {
     return then((value) => value.mapError(fn));
   }
 
   AsyncResult<TFailure, T> flatMap<T>(
-      AsyncResult<TFailure, T> Function(TSuccess success) fn) {
+    AsyncResult<TFailure, T> Function(TSuccess success) fn,
+  ) {
     return then((value) => value.when(Failure.new, fn));
   }
 
   AsyncResult<TFailure, TSuccess> recovery<T>(
-      AsyncResult<TFailure, TSuccess> Function(TFailure error) fn) {
+    AsyncResult<TFailure, TSuccess> Function(TFailure error) fn,
+  ) {
     return then((value) => value.when(fn, Success.new));
   }
 
-  AsyncResult<TFailure, T> pure<T>(AsyncResult<TFailure, T> Function() fn) {
+  AsyncResult<TFailure, T> pure<T>(
+    AsyncResult<TFailure, T> Function() fn,
+  ) {
     return then((value) => value.when(Failure.new, (_) => fn()));
   }
 }
